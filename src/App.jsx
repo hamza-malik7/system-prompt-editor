@@ -141,6 +141,10 @@ function App() {
     }
   };
 
+  const handleClearChat = () => {
+    setMessages([defaultMessage]);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-7xl mx-auto">
@@ -159,6 +163,7 @@ function App() {
           <LiveChat
             messages={messages}
             onSendMessage={handleSendMessage}
+            onClearChat={handleClearChat}
             currentVersion={
               prompts.find((p) => p.id === currentPromptId)?.version
             }

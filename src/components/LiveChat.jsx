@@ -7,7 +7,7 @@ import { Send } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-const LiveChat = ({ messages, onSendMessage, currentVersion }) => {
+const LiveChat = ({ messages, onSendMessage, onClearChat, currentVersion }) => {
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef(null);
 
@@ -34,13 +34,20 @@ const LiveChat = ({ messages, onSendMessage, currentVersion }) => {
 
   return (
     <Card className="h-full flex flex-col overflow-hidden">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold ">
-          Live Chat
-          <Badge variant="outline" className="text-xs ml-2">
-            {currentVersion ? `${currentVersion}` : ""}
-          </Badge>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="text-xl font-semibold">
+          Live Chat {currentVersion ? `(${currentVersion})` : ""}
         </CardTitle>
+        {onClearChat && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClearChat}
+            className="ml-auto"
+          >
+            Clear chat
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="flex-1 flex flex-col space-y-4 overflow-hidden">
         <div className="flex-1 overflow-y-auto space-y-3 p-4 bg-gray-50 rounded-lg">
