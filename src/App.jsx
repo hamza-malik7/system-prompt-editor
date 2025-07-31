@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
-import {
-  defaultPrompts,
-  defaultMessage,
-  AVAILABLE_MODELS,
-} from "./constants/defaults";
+import { Toaster, toast } from "sonner";
+import { defaultPrompts, AVAILABLE_MODELS } from "./constants/defaults";
 import SystemPrompt from "./components/SystemPrompt";
 import LiveChat from "./components/LiveChat";
 import "./App.css";
 
 function App() {
-  const [messages, setMessages] = useState([defaultMessage]);
+  const [messages, setMessages] = useState([]);
 
   const [prompts, setPrompts] = useState(() => {
     try {
@@ -77,6 +74,8 @@ function App() {
       p.id === currentPromptId ? { ...p, content: currentPromptContent } : p
     );
     setPrompts(updatedPrompts);
+
+    toast.success("Prompt applied", { icon: "✅" });
   };
 
   const handleResetPrompts = () => {
@@ -149,11 +148,12 @@ function App() {
   };
 
   const handleClearChat = () => {
-    setMessages([defaultMessage]);
+    setMessages([]);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
+      <Toaster richColors position="top-right" />
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-2rem)]">
           <SystemPrompt

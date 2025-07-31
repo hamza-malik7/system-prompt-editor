@@ -10,7 +10,7 @@ export const defaultPrompts = [
     id: 1,
     version: "v1",
     content: INITIAL_PROMPT,
-    title: "Fitness Assistant",
+    title: "Health Coach",
   },
 ];
 
