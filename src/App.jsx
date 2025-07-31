@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import { Toaster, toast } from "sonner";
-import { defaultPrompts, AVAILABLE_MODELS } from "./constants/defaults";
+import {
+  defaultPrompts,
+  AVAILABLE_MODELS,
+  DEFAULT_EVALUATION,
+} from "./constants/defaults";
 import SystemPrompt from "./components/SystemPrompt";
 import LiveChat from "./components/LiveChat";
+import EvaluationSidebar from "./components/EvaluationSidebar";
 import "./App.css";
 
 function App() {
@@ -37,6 +42,9 @@ function App() {
   const [isSaving, setIsSaving] = useState(false);
 
   const [currentModel, setCurrentModel] = useState("gpt-4o-mini");
+
+  const [evaluationConfig, setEvaluationConfig] = useState(DEFAULT_EVALUATION);
+  const [evalSettingsOpen, setEvalSettingsOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("systemPrompts", JSON.stringify(prompts));
@@ -76,6 +84,33 @@ function App() {
     setPrompts(updatedPrompts);
 
     toast.success("Prompt applied", { icon: "✅" });
+  };
+
+  const evaluateResponse = async (userMsg, aiMsg, messageId) => {
+    try {
+      const { sendChatMessage } = await import("./services/openai");
+      const evalPrompt = `You are an evaluator. Using the following criteria, decide if the assistant's response meets them. Reply strictly in JSON: {\\"status\\":\\"accepted|rejected\\",\\"reason\\":\\"...\\"}.\n\nCRITERIA:\n${evaluationConfig.criteria}`;
+
+      const evalResult = await sendChatMessage(
+        evalPrompt,
+        `User message: ${userMsg}\nAssistant response: ${aiMsg}`,
+        [],
+        evaluationConfig.model
+      );
+
+      let parsed;
+      try {
+        parsed = JSON.parse(evalResult);
+      } catch {
+        parsed = { status: "accepted", reason: evalResult };
+      }
+
+      setMessages((prev) =>
+        prev.map((m) => (m.id === messageId ? { ...m, evaluation: parsed } : m))
+      );
+    } catch (err) {
+      console.error("Evaluation error", err);
+    }
   };
 
   const handleResetPrompts = () => {
@@ -131,6 +166,8 @@ function App() {
           m.id === typingId ? { ...m, content: aiResponse, isTyping: false } : m
         )
       );
+
+      evaluateResponse(message, aiResponse, typingId);
     } catch (error) {
       console.error("Error sending message:", error);
 
@@ -166,6 +203,7 @@ function App() {
             onRun={handlePromptRun}
             isSaving={isSaving}
             onReset={handleResetPrompts}
+            onToggleEval={() => setEvalSettingsOpen(true)}
           />
           <LiveChat
             messages={messages}
@@ -180,6 +218,13 @@ function App() {
           />
         </div>
       </div>
+      <EvaluationSidebar
+        open={evalSettingsOpen}
+        onClose={() => setEvalSettingsOpen(false)}
+        models={AVAILABLE_MODELS}
+        config={evaluationConfig}
+        onConfigChange={setEvaluationConfig}
+      />
     </div>
   );
 }

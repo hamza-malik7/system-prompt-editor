@@ -18,6 +18,7 @@ const SystemPrompt = ({
   onRun,
   onReset,
   isSaving,
+  onToggleEval,
 }) => {
   const handleTextareaChange = (e) => {
     onPromptContentChange(e.target.value);
@@ -25,8 +26,13 @@ const SystemPrompt = ({
 
   return (
     <Card className="h-full flex flex-col">
-      <CardHeader>
+      <CardHeader className="flex items-center justify-between">
         <CardTitle className="text-xl font-semibold">System Prompt</CardTitle>
+        {onToggleEval && (
+          <Button variant="outline" size="sm" onClick={onToggleEval}>
+            Manage Evaluation
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="flex-1 flex flex-col space-y-4">
         <div className="flex flex-row space-x-2 justify-center items-center">

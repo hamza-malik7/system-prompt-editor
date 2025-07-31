@@ -21,6 +21,11 @@ export const defaultMessage = {
   timestamp: Date.now(),
 };
 
+export const DEFAULT_EVALUATION = {
+  model: "gpt-4o-mini",
+  criteria: "Is the response polite, user friendly and respectful?",
+};
+
 export const AVAILABLE_MODELS = [
   "gpt-4.1",
   "gpt-4.1-mini",
