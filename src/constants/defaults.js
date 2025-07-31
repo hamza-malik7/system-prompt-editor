@@ -20,3 +20,14 @@ export const defaultMessage = {
   content: INITIAL_MESSAGE,
   timestamp: Date.now(),
 };
+
+export const AVAILABLE_MODELS = [
+  "gpt-4.1",
+  "gpt-4.1-mini",
+  "gpt-4.1-nano",
+  "gpt-4o",
+  "gpt-4o-mini",
+  "gpt-4o-realtime-preview",
+  "gpt-4o-mini-tts",
+  "dall-e-3",
+];

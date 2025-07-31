@@ -34,7 +34,8 @@ export const generateTitle = async (promptContent) => {
 export const sendChatMessage = async (
   systemPrompt,
   userMessage,
-  conversationHistory = []
+  conversationHistory = [],
+  model = "gpt-4o-mini"
 ) => {
   try {
     const messages = [
@@ -53,7 +54,7 @@ export const sendChatMessage = async (
     ];
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model,
       messages: messages,
       max_tokens: 500,
       temperature: 0.7,

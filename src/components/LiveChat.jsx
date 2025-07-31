@@ -1,13 +1,28 @@
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Send } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
-const LiveChat = ({ messages, onSendMessage, onClearChat, currentVersion }) => {
+const LiveChat = ({
+  messages,
+  onSendMessage,
+  onClearChat,
+  models = [],
+  currentModel,
+  onModelChange,
+  currentVersion,
+}) => {
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef(null);
 
@@ -38,16 +53,27 @@ const LiveChat = ({ messages, onSendMessage, onClearChat, currentVersion }) => {
         <CardTitle className="text-xl font-semibold">
           Live Chat {currentVersion ? `(${currentVersion})` : ""}
         </CardTitle>
-        {onClearChat && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onClearChat}
-            className="ml-auto"
-          >
-            Clear chat
-          </Button>
-        )}
+        <div className="flex items-center gap-2 ml-auto">
+          {models.length > 0 && (
+            <Select value={currentModel} onValueChange={onModelChange}>
+              <SelectTrigger className="w-[9rem] h-8 text-xs">
+                <SelectValue placeholder="Model" />
+              </SelectTrigger>
+              <SelectContent>
+                {models.map((m) => (
+                  <SelectItem key={m} value={m} className="text-xs">
+                    {m}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {onClearChat && (
+            <Button variant="outline" size="sm" onClick={onClearChat}>
+              Clear chat
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col space-y-4 overflow-hidden">
         <div className="flex-1 overflow-y-auto space-y-3 p-4 bg-gray-50 rounded-lg">

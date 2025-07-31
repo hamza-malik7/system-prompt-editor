@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { defaultPrompts, defaultMessage } from "./constants/defaults";
+import {
+  defaultPrompts,
+  defaultMessage,
+  AVAILABLE_MODELS,
+} from "./constants/defaults";
 import SystemPrompt from "./components/SystemPrompt";
 import LiveChat from "./components/LiveChat";
 import "./App.css";
@@ -34,6 +38,8 @@ function App() {
   });
 
   const [isSaving, setIsSaving] = useState(false);
+
+  const [currentModel, setCurrentModel] = useState("gpt-4o-mini");
 
   useEffect(() => {
     localStorage.setItem("systemPrompts", JSON.stringify(prompts));
@@ -117,7 +123,8 @@ function App() {
       const aiResponse = await sendChatMessage(
         currentPrompt.content,
         message,
-        recentHistory
+        recentHistory,
+        currentModel
       );
 
       setMessages((prev) =>
@@ -163,6 +170,9 @@ function App() {
           <LiveChat
             messages={messages}
             onSendMessage={handleSendMessage}
+            models={AVAILABLE_MODELS}
+            currentModel={currentModel}
+            onModelChange={setCurrentModel}
             onClearChat={handleClearChat}
             currentVersion={
               prompts.find((p) => p.id === currentPromptId)?.version
