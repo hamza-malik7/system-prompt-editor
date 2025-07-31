@@ -99,10 +99,21 @@ function App() {
       );
 
       let parsed;
-      try {
-        parsed = JSON.parse(evalResult);
-      } catch {
-        parsed = { status: "accepted", reason: evalResult };
+      const jsonMatch = evalResult.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          parsed = JSON.parse(jsonMatch[0]);
+        } catch {
+          parsed = {
+            status: "rejected",
+            reason: "Invalid JSON from evaluator",
+          };
+        }
+      } else {
+        parsed = {
+          status: "rejected",
+          reason: "No JSON result from evaluator",
+        };
       }
 
       setMessages((prev) =>
